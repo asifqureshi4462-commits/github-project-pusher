@@ -1,130 +1,37 @@
-# 🚀 GitHub Project Pusher
+# GitHub Project Pusher
 
-GitHub Project Pusher is a mobile-friendly web application that makes it easy to upload and push ZIP files, project files, and complete projects directly to GitHub repositories using the GitHub API.
+A fast, atomic, responsive web application to upload entire projects, folders, or `.zip` archives directly to any GitHub repository using a GitHub Personal Access Token.
 
-## ✨ Features
+---
 
-- 📦 Upload ZIP files
-- 📁 Upload project files
-- 🔐 Use your own GitHub Personal Access Token
-- 📚 Fetch and select GitHub repositories
-- 🌿 Select Git branches
-- 📤 Push projects directly to GitHub
-- 📝 Custom commit messages
-- 📊 Upload progress
-- ✅ Success and error status
-- 📱 Mobile-friendly interface
-- 💻 Desktop-friendly interface
-- 🔄 Support for updating existing files
-- 🗂️ Preserve project folder structure
+## Features
 
-## 🔄 How It Works
+- **Direct ZIP Extraction & Preservation**: Decompresses `.zip` archives client-side, retaining all subdirectories, nested assets, binaries (images, PDFs), and file permissions.
+- **Folder & Multi-File Upload**: Supports drag-and-drop, standard multi-file selection, or entire directory trees (`webkitdirectory`).
+- **Atomic Git Commit Engine**: Uses GitHub's Git Database API (`/git/blobs` ➔ `/git/trees` ➔ `/git/commits` ➔ `/git/refs`). Commits all files in a single atomic Git commit, eliminating individual file conflicts.
+- **Repository & Branch Intelligence**: Automatically fetches your owned, collaborated, and organization repositories. Auto-detects default branches and allows targeting existing or new custom branches.
+- **Subdirectory Targeting**: Push files to the repository root or into an optional subfolder (e.g. `src/` or `frontend/`).
+- **Mobile-First Dark Interface**: Designed for high responsiveness across mobile touchscreens and desktop viewports.
+- **Zero Token Persistence**: Your token is held in memory/session only. It is never stored in any database or sent to any third-party intermediary.
 
-```text
-Select ZIP / Project
-        ↓
-Enter GitHub Token
-        ↓
-Connect GitHub
-        ↓
-Select Repository
-        ↓
-Select Branch
-        ↓
-Review Project Files
-        ↓
-Enter Commit Message
-        ↓
-🚀 Push to GitHub
+---
 
-🔐 Security
+## Token Permissions & Scopes
 
-GitHub Project Pusher is designed to use the user's own GitHub credentials.
+To push project files to your repositories, generate a GitHub Personal Access Token:
 
-Important:
+1. Go to **GitHub Settings** ➔ **Developer Settings** ➔ **Personal access tokens**.
+2. Create either:
+   - **Classic Token**: Select the **`repo`** scope (for private + public repositories) or **`public_repo`** (for public repositories only).
+   - **Fine-grained Token**: Select your target repository and grant **Read and Write** access for **Contents** and **Metadata**.
 
-Never hard-code a GitHub token in the source code.
+---
 
-Never commit tokens or passwords to GitHub.
+## Getting Started
 
-Do not expose tokens in public JavaScript files.
+### Local Setup (PHP Built-in Server)
 
-Use the minimum GitHub permissions required.
-
-Clear the token when disconnecting from the application.
-
-
-🛠️ Technology
-
-HTML5
-
-CSS3
-
-JavaScript
-
-PHP 8+
-
-GitHub REST API
-
-
-📦 Project Structure
-
-github-project-pusher/
-├── index.php
-├── api/
-├── config/
-├── assets/
-│   ├── css/
-│   ├── js/
-│   └── icons/
-├── uploads/
-├── .gitignore
-└── README.md
-
-🚀 Getting Started
-
-1. Clone or download this repository.
-
-
-2. Configure the application according to the setup instructions.
-
-
-3. Start the PHP server.
-
-
-4. Open the application in your browser.
-
-
-5. Enter your GitHub token.
-
-
-6. Connect your GitHub account.
-
-
-7. Select a repository and branch.
-
-
-8. Select your ZIP/project.
-
-
-9. Enter a commit message.
-
-
-10. Click Push to GitHub.
-
-
-
-⚠️ Limitations
-
-GitHub has API and file-size limitations. Very large projects or files may require a normal Git-based workflow instead of the GitHub REST API.
-
-📄 License
-
-This project is provided for educational and development purposes.
-
-👨‍💻 Author
-
-Asif Qureshi
-
-Built as a developer utility for easily pushing projects to GitHub from mobile or desktop.
-
+1. Clone or download this project.
+2. Open your terminal in the project directory:
+   ```bash
+   cd github-project-pusher
