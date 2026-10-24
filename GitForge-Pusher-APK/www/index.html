@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1117">
+  <title>GitForge Pusher</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="img/logo.png" alt="Logo" class="brand-logo" id="brand-logo">
+      <div>
+        <div class="brand-name">GitForge Pusher</div>
+        <div class="brand-sub">ZIP extract karo, GitHub par push karo</div>
+      </div>
+    </div>
+    <span id="user-pill" class="pill pill-off">Not connected</span>
+  </header>
+
+  <div id="alert" class="alert hidden" role="alert"></div>
+
+  <main class="container">
+
+    <!-- 1. TOKEN -->
+    <section class="card" id="card-token">
+      <h2><span class="step">1</span> GitHub Token</h2>
+      <p class="hint">GitHub &rarr; Settings &rarr; Developer settings &rarr; Personal access tokens. Classic token mein <b>repo</b> permission, ya fine-grained token mein <b>Contents: Read and write</b> do.</p>
+      <div class="row">
+        <input type="password" id="token" placeholder="ghp_xxxxxxxxxxxxxxxx" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button type="button" class="btn btn-ghost" id="btn-eye" aria-label="Show or hide token">👁</button>
+      </div>
+      <label class="check"><input type="checkbox" id="remember"> Token is phone par yaad rakho (sirf aapke device par save hota hai)</label>
+      <div class="row">
+        <button type="button" class="btn btn-primary grow" id="btn-connect">Connect</button>
+        <button type="button" class="btn btn-ghost hidden" id="btn-disconnect">Disconnect</button>
+      </div>
+    </section>
+
+    <!-- 2. REPO -->
+    <section class="card disabled" id="card-repo">
+      <h2><span class="step">2</span> Repository &amp; Branch</h2>
+      <label class="lbl" for="repo-search">Repo dhundo</label>
+      <input type="text" id="repo-search" placeholder="Repo ka naam likho..." autocomplete="off">
+      <label class="lbl" for="repo-select">Repository</label>
+      <select id="repo-select"></select>
+
+      <label class="lbl" for="branch-select">Branch</label>
+      <div class="row">
+        <select id="branch-select" class="grow"></select>
+        <input type="text" id="branch-custom" class="grow hidden" placeholder="nayi branch ka naam">
+        <button type="button" class="btn btn-ghost" id="btn-branch-toggle">Nayi</button>
+      </div>
+
+      <details class="details">
+        <summary>Naya repository banao</summary>
+        <input type="text" id="new-repo-name" placeholder="repo-name" autocomplete="off" autocapitalize="off">
+        <label class="check"><input type="checkbox" id="new-repo-private" checked> Private repo</label>
+        <button type="button" class="btn btn-secondary" id="btn-create-repo">Repo banao</button>
+      </details>
+
+      <label class="lbl" for="commit-msg">Commit message</label>
+      <input type="text" id="commit-msg" value="Upload project via GitForge Pusher">
+      <label class="lbl" for="subdir">Folder ke andar daalna ho to (optional)</label>
+      <input type="text" id="subdir" placeholder="khali = repo ke root mein" autocapitalize="off">
+    </section>
+
+    <!-- 3. FILES -->
+    <section class="card" id="card-files">
+      <h2><span class="step">3</span> Project Files <span class="pill" id="count-pill">0 files</span></h2>
+      <div class="dropzone" id="dropzone">
+        <div class="drop-icon">📦</div>
+        <p><b>ZIP</b> ya files chuno. ZIP ko app khud <b>extract</b> karke ek ek file alag upload karegi.</p>
+        <label class="btn btn-secondary file-btn">ZIP / Files chuno
+          <input type="file" id="pick-files" multiple>
+        </label>
+        <label class="btn btn-ghost file-btn hidden" id="folder-label">Folder chuno
+          <input type="file" id="pick-folder" webkitdirectory directory multiple>
+        </label>
+      </div>
+
+      <div id="extract-progress" class="hidden">
+        <div class="bar"><div class="bar-fill" id="extract-fill"></div></div>
+        <div class="hint" id="extract-text">Extract ho raha hai...</div>
+      </div>
+
+      <div id="files-area" class="hidden">
+        <div id="secret-warning" class="warn hidden">⚠ Kuch files mein secret/token jaisa data mila. Wo files automatically unselect kar di gayi hain.</div>
+        <label class="check"><input type="checkbox" id="strip-root" checked> ZIP ka bahari root folder hata do (<span id="root-name"></span>)</label>
+        <div class="row between">
+          <span class="hint" id="total-size">0 B</span>
+          <span>
+            <button type="button" class="link" id="btn-all">Sab select</button> ·
+            <button type="button" class="link" id="btn-none">Sab unselect</button> ·
+            <button type="button" class="link" id="btn-clear">Clear</button>
+          </span>
+        </div>
+        <div id="file-list" class="file-list"></div>
+      </div>
+    </section>
+
+    <!-- 4. PUSH -->
+    <section class="card" id="card-push">
+      <h2><span class="step">4</span> Push</h2>
+      <button type="button" class="btn btn-success big" id="btn-push" disabled>🚀 GitHub par Push karo</button>
+
+      <div id="push-progress" class="hidden">
+        <div class="row between"><b id="push-stage">Uploading...</b><b id="push-pct">0%</b></div>
+        <div class="bar"><div class="bar-fill" id="push-fill"></div></div>
+        <div class="hint" id="push-count"></div>
+        <div class="log" id="log"></div>
+      </div>
+
+      <div id="result" class="result hidden">
+        <div class="result-title" id="result-title">✅ Push ho gaya!</div>
+        <div class="row">
+          <a class="btn btn-primary grow" id="link-repo" target="_blank" rel="noopener noreferrer">Repo kholo</a>
+          <a class="btn btn-secondary grow" id="link-commit" target="_blank" rel="noopener noreferrer">Commit dekho</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">Token sirf GitHub ko jata hai. Koi server beech mein nahi.</footer>
+
+  <script src="js/zip.js"></script>
+  <script src="js/github.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
